@@ -36,42 +36,63 @@ export function QuestionPanel() {
         {/* Step 1: Initial Setup */}
         {currentStep === 'initial' && (
           <div>
-            <h2 className="text-2xl font-bold text-mateus-black mb-4">Iniciar Nova Compra</h2>
+            <h2 className="text-2xl font-bold text-mateus-black mb-4">Sistema PDV</h2>
             <p className="text-gray-600 mb-6">
-              Bem-vindo ao sistema PDV Mateus Armazém. Clique em "Iniciar Compra" para começar.
+              Bem-vindo ao Mateus Armazém. Clique no botão ao lado para começar uma nova compra.
             </p>
             
-            <div className="space-y-4">
-              <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                <h3 className="font-semibold text-mateus-black mb-2">Configurações da Venda</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-3">
-                    <Checkbox
-                      id="emit-invoice"
-                      checked={invoiceRequested}
-                      onCheckedChange={(checked) => setInvoiceRequested(!!checked)}
-                    />
-                    <Label htmlFor="emit-invoice" className="text-mateus-black">
-                      Emitir Nota Fiscal
-                    </Label>
-                  </div>
-                  {invoiceRequested && (
-                    <div>
-                      <Label htmlFor="cpf-input" className="block text-mateus-black font-medium mb-2">
-                        CPF do Cliente
-                      </Label>
-                      <Input
-                        id="cpf-input"
-                        type="text"
-                        placeholder="000.000.000-00"
-                        value={customerCPF}
-                        onChange={handleCPFChange}
-                        maxLength={14}
-                      />
-                    </div>
-                  )}
+            <div className="bg-mateus-yellow p-6 rounded-lg">
+              <h3 className="font-bold text-mateus-black mb-2">Pronto para começar?</h3>
+              <p className="text-mateus-black">
+                Inicie uma nova venda clicando no botão "CLIQUE PARA COMEÇAR A COMPRA"
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Invoice Question */}
+        {currentStep === 'invoice-question' && (
+          <div>
+            <h2 className="text-2xl font-bold text-mateus-black mb-6">Pergunta 1 de 2</h2>
+            <div className="bg-blue-50 p-6 rounded-lg border border-blue-200 mb-6">
+              <h3 className="text-xl font-semibold text-mateus-black mb-4">
+                Você deseja emitir nota fiscal?
+              </h3>
+              <p className="text-gray-600 mb-4">
+                A nota fiscal será gerada em PDF ao final da compra
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: CPF Question */}
+        {currentStep === 'cpf-question' && (
+          <div>
+            <h2 className="text-2xl font-bold text-mateus-black mb-6">Pergunta 2 de 2</h2>
+            <div className="bg-green-50 p-6 rounded-lg border border-green-200 mb-6">
+              <h3 className="text-xl font-semibold text-mateus-black mb-4">
+                Deseja incluir CPF na nota fiscal?
+              </h3>
+              <p className="text-gray-600 mb-4">
+                {invoiceRequested ? 'O CPF será incluído na nota fiscal' : 'Esta opção só está disponível se você escolher emitir nota fiscal'}
+              </p>
+              
+              {invoiceRequested && (
+                <div className="mt-4">
+                  <Label htmlFor="cpf-input" className="block text-mateus-black font-medium mb-2">
+                    Digite o CPF do cliente:
+                  </Label>
+                  <Input
+                    id="cpf-input"
+                    type="text"
+                    placeholder="000.000.000-00"
+                    value={customerCPF}
+                    onChange={handleCPFChange}
+                    maxLength={14}
+                    className="text-lg"
+                  />
                 </div>
-              </div>
+              )}
             </div>
           </div>
         )}

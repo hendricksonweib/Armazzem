@@ -12,7 +12,7 @@ export interface CartItem extends Product {
 
 export type PaymentMethod = 'credit' | 'debit' | 'voucher' | 'pix';
 
-export type PDVStep = 'initial' | 'products' | 'payment' | 'complete';
+export type PDVStep = 'initial' | 'invoice-question' | 'cpf-question' | 'products' | 'payment' | 'complete';
 
 export interface PDVState {
   currentStep: PDVStep;

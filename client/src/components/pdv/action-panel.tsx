@@ -11,9 +11,12 @@ import {
   CheckCircle2,
   FileText,
   Plus,
-  Loader2
+  Loader2,
+  Camera,
+  Keyboard
 } from 'lucide-react';
 import { useState } from 'react';
+import { Input } from '@/components/ui/input';
 
 export function ActionPanel() {
   const {
@@ -28,17 +31,15 @@ export function ActionPanel() {
     addProduct,
     setPaymentMethod,
     setProcessingPayment,
+    setInvoiceRequested,
+    setCustomerCPF,
     resetStore,
   } = usePDVStore();
 
   const [paymentSuccess, setPaymentSuccess] = useState(false);
 
   const handleStartPurchase = () => {
-    if (invoiceRequested && !customerCPF) {
-      alert('Por favor, informe o CPF para emissão da nota fiscal.');
-      return;
-    }
-    setStep('products');
+    setStep('invoice-question');
   };
 
   const handleProceedToPayment = () => {
@@ -124,18 +125,108 @@ export function ActionPanel() {
         {currentStep === 'initial' && (
           <div className="text-center">
             <div className="mb-8">
+              {/* Logo do Mateus Armazém */}
+              <div className="bg-mateus-yellow p-8 rounded-2xl shadow-xl mx-auto max-w-lg mb-8">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="bg-mateus-black text-mateus-yellow px-6 py-3 rounded-xl font-bold text-3xl mr-4">
+                    MATEUS
+                  </div>
+                  <span className="text-mateus-black font-bold text-2xl">ARMAZÉM</span>
+                </div>
+                <div className="text-mateus-black font-semibold text-lg">
+                  Sistema PDV - Ponto de Venda
+                </div>
+              </div>
+
+              {/* Imagem grande */}
               <img
-                src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
-                alt="Supermarket checkout"
-                className="rounded-lg shadow-md mx-auto w-full max-w-md h-48 object-cover mb-6"
+                src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400"
+                alt="Caixa do supermercado"
+                className="rounded-2xl shadow-2xl mx-auto w-full max-w-2xl h-80 object-cover mb-8"
               />
+              
+              {/* Aviso */}
+              <div className="bg-white p-6 rounded-xl shadow-lg mb-6 border-l-4 border-mateus-yellow">
+                <p className="text-mateus-black text-lg font-medium mb-2">
+                  Bem-vindo ao Mateus Armazém!
+                </p>
+                <p className="text-gray-600">
+                  Clique no botão abaixo para começar uma nova compra
+                </p>
+              </div>
+
               <Button
                 onClick={handleStartPurchase}
-                className="bg-mateus-yellow hover:bg-yellow-500 text-mateus-black font-bold py-4 px-8 text-xl shadow-lg"
+                className="bg-mateus-yellow hover:bg-yellow-500 text-mateus-black font-bold py-6 px-12 text-2xl shadow-2xl rounded-xl transform hover:scale-105 transition-all"
                 size="lg"
               >
-                <ShoppingCart className="mr-3 w-6 h-6" />
-                Iniciar Compra
+                <ShoppingCart className="mr-4 w-8 h-8" />
+                CLIQUE PARA COMEÇAR A COMPRA
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Invoice Question Buttons */}
+        {currentStep === 'invoice-question' && (
+          <div className="text-center">
+            <h3 className="text-xl font-bold text-mateus-black mb-8">Escolha sua opção:</h3>
+            <div className="flex justify-center space-x-8">
+              <Button
+                onClick={() => {
+                  setInvoiceRequested(true);
+                  setStep('cpf-question');
+                }}
+                className="bg-green-500 hover:bg-green-600 text-white font-bold py-8 px-12 text-2xl shadow-2xl rounded-xl transform hover:scale-105 transition-all"
+                size="lg"
+              >
+                <CheckCircle2 className="mr-4 w-8 h-8" />
+                SIM
+              </Button>
+              <Button
+                onClick={() => {
+                  setInvoiceRequested(false);
+                  setStep('cpf-question');
+                }}
+                className="bg-red-500 hover:bg-red-600 text-white font-bold py-8 px-12 text-2xl shadow-2xl rounded-xl transform hover:scale-105 transition-all"
+                size="lg"
+              >
+                ✕ NÃO
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* CPF Question Buttons */}
+        {currentStep === 'cpf-question' && (
+          <div className="text-center">
+            <h3 className="text-xl font-bold text-mateus-black mb-8">Escolha sua opção:</h3>
+            <div className="flex justify-center space-x-8">
+              <Button
+                onClick={() => {
+                  if (invoiceRequested) {
+                    // Se escolheu SIM, espera o CPF ser digitado
+                    setStep('products');
+                  } else {
+                    setStep('products');
+                  }
+                }}
+                disabled={invoiceRequested && !customerCPF}
+                className="bg-green-500 hover:bg-green-600 text-white font-bold py-8 px-12 text-2xl shadow-2xl rounded-xl transform hover:scale-105 transition-all disabled:opacity-50"
+                size="lg"
+              >
+                <CheckCircle2 className="mr-4 w-8 h-8" />
+                {invoiceRequested ? 'SIM (Digite o CPF)' : 'SIM'}
+              </Button>
+              <Button
+                onClick={() => {
+                  setCustomerCPF('');
+                  setStep('products');
+                }}
+                className="bg-red-500 hover:bg-red-600 text-white font-bold py-8 px-12 text-2xl shadow-2xl rounded-xl transform hover:scale-105 transition-all"
+                size="lg"
+              >
+                ✕ NÃO
               </Button>
             </div>
           </div>
