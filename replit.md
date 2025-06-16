@@ -101,10 +101,19 @@ The system uses three main tables:
 - **Migrations**: Generated in `./migrations` directory
 - **Push Command**: `npm run db:push` for schema updates
 
+## Recent Changes
+
+- June 16, 2025: Enhanced PDV interface with improved user flow
+  - Added step-by-step question flow (nota fiscal → CPF)
+  - Implemented SIM/NÃO buttons for user decisions
+  - Added camera simulation and manual barcode entry options
+  - Enhanced final thank you screen with purchase summary
+  - Updated step indicator to show all 6 workflow stages
+  - Improved visual design with Mateus Armazém branding
+
 ## Changelog
 
-Changelog:
-- June 16, 2025. Initial setup
+- June 16, 2025: Initial setup and enhanced PDV interface
 
 ## User Preferences
 
