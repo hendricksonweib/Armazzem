@@ -15,7 +15,7 @@ import {
   Camera,
   Keyboard
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 
 export function ActionPanel() {
@@ -39,6 +39,27 @@ export function ActionPanel() {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [manualBarcode, setManualBarcode] = useState('');
   const [showManualEntry, setShowManualEntry] = useState(false);
+  const [autoReturnCountdown, setAutoReturnCountdown] = useState(0);
+
+  // Auto return to initial screen after purchase completion
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    
+    if (currentStep === 'complete' && autoReturnCountdown > 0) {
+      timer = setTimeout(() => {
+        const newCount = autoReturnCountdown - 1;
+        if (newCount === 0) {
+          handleNewPurchase();
+        } else {
+          setAutoReturnCountdown(newCount);
+        }
+      }, 1000);
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [autoReturnCountdown, currentStep]);
 
   const handleStartPurchase = () => {
     setStep('invoice-question');
@@ -70,6 +91,8 @@ export function ActionPanel() {
       setTimeout(() => {
         setStep('complete');
         setProcessingPayment(false);
+        // Start 30 second countdown to return to initial screen
+        setAutoReturnCountdown(30);
       }, 2000);
     }, 3000);
   };
@@ -91,6 +114,7 @@ export function ActionPanel() {
     setPaymentSuccess(false);
     setManualBarcode('');
     setShowManualEntry(false);
+    setAutoReturnCountdown(0);
   };
 
   const handleManualBarcodeSubmit = () => {
@@ -465,10 +489,28 @@ export function ActionPanel() {
               </Button>
             </div>
 
+            {/* Auto Return Countdown */}
+            {autoReturnCountdown > 0 && (
+              <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center justify-center space-x-2">
+                  <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
+                  <span className="text-blue-700 font-medium">
+                    Retornando ao início em {autoReturnCountdown} segundos...
+                  </span>
+                </div>
+                <div className="mt-2 bg-blue-200 rounded-full h-2">
+                  <div 
+                    className="bg-blue-600 h-2 rounded-full transition-all duration-1000"
+                    style={{ width: `${((30 - autoReturnCountdown) / 30) * 100}%` }}
+                  ></div>
+                </div>
+              </div>
+            )}
+
             {/* Footer Message */}
             <div className="mt-8 text-sm text-gray-500">
               <p>Sistema PDV Mateus Armazém v1.0</p>
-              <p>Tenha um ótimo dia! 😊</p>
+              <p>Tenha um ótimo dia!</p>
             </div>
           </div>
         )}
